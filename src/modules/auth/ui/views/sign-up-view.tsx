@@ -16,9 +16,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { OctagonAlertIcon } from "lucide-react";
+import { FaGoogle, FaGithub } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
+import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -35,10 +36,11 @@ const formSchema = z
     path: ["confirmPassword"],
   });
 
-const SignUpView = () => {
-  const router = useRouter();
+export const SignUpView = () => {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -59,10 +61,32 @@ const SignUpView = () => {
         name: data.name,
         email: data.email,
         password: data.password,
+        callbackURL: "/",
       },
       {
         onSuccess: () => {
+          setPending(false);
           router.push("/");
+        },
+        onError: ({ error }) => {
+          setError(error.message);
+          setPending(false);
+        },
+      },
+    );
+  };
+
+  const onSocial = (provider: "google" | "github") => {
+    setError(null);
+    setPending(true);
+
+    authClient.signIn.social(
+      {
+        provider: provider,
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
           setPending(false);
         },
         onError: ({ error }) => {
@@ -81,7 +105,9 @@ const SignUpView = () => {
             <form className="p-6 md:p-8" onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-center text-center">
-                  <h1 className="text-2xl font-bold">Let&Apos;get started</h1>
+                  <h1 className="text-2xl font-bold uppercase">
+                    Let&apos;get started
+                  </h1>
                   <p className="text-muted-foreground text-balance">
                     Create your acount
                   </p>
@@ -169,7 +195,7 @@ const SignUpView = () => {
                   </Alert>
                 )}
                 <Button disabled={pending} type="submit" className="w-full">
-                  Sign in
+                  Sign up
                 </Button>
                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                   <span className="bg-card text-muted-foreground relative z-10 px-2">
@@ -182,16 +208,18 @@ const SignUpView = () => {
                     variant="outline"
                     type="button"
                     className="w-full"
+                    onClick={() => onSocial("google")}
                   >
-                    Google
+                    <FaGoogle />
                   </Button>
                   <Button
                     disabled={pending}
                     variant="outline"
                     type="button"
                     className="w-full"
+                    onClick={() => onSocial("github")}
                   >
-                    Github
+                    <FaGithub />
                   </Button>
                 </div>
                 <div className="text-center text-sm">
@@ -225,5 +253,3 @@ const SignUpView = () => {
     </div>
   );
 };
-
-export default SignUpView;
