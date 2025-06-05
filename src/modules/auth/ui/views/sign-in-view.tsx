@@ -185,7 +185,7 @@ export const SignInView = () => {
             </form>
           </Form>
 
-          <div className="relative hidden flex-col items-center justify-center gap-y-4 bg-radial from-green-700 to-green-900 md:flex">
+          <div className="from-sidebar-accent to-sidebar relative hidden flex-col items-center justify-center gap-y-4 bg-radial md:flex">
             <img
               src="/logo.svg"
               alt="Logo Image"
