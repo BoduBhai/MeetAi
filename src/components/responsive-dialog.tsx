@@ -2,6 +2,7 @@
 
 import {
   Drawer,
+  DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
@@ -33,15 +34,16 @@ export const ResponsiveDialog = ({
   onOpenChange,
 }: ResponsiveDialogProps) => {
   const isMobile = useIsMobile();
-
   if (isMobile) {
     return (
       <Drawer open={open} onOpenChange={onOpenChange}>
-        <DrawerHeader>
-          <DrawerTitle>{title}</DrawerTitle>
-          <DrawerDescription> {description} </DrawerDescription>
-        </DrawerHeader>
-        <div className="p-4">{children}</div>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>{title}</DrawerTitle>
+            <DrawerDescription> {description} </DrawerDescription>
+          </DrawerHeader>
+          <div className="p-4">{children}</div>
+        </DrawerContent>
       </Drawer>
     );
   }
