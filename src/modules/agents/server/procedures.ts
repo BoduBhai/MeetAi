@@ -17,6 +17,17 @@ import {
 } from "@/constants";
 
 export const agentsRouter = createTRPCRouter({
+  create: protectedProcedure
+    .input(agentsInsertSchema)
+    .mutation(async ({ input, ctx }) => {
+      const [createdAagent] = await db
+        .insert(agents)
+        .values({ ...input, userId: ctx.auth.user.id })
+        .returning();
+
+      return createdAagent;
+    }),
+
   update: protectedProcedure
     .input(agentsUpdateSchema)
     .mutation(async ({ ctx, input }) => {
@@ -34,6 +45,7 @@ export const agentsRouter = createTRPCRouter({
 
       return updatedAgent;
     }),
+
   remove: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -121,16 +133,5 @@ export const agentsRouter = createTRPCRouter({
         total: total.count,
         totalPages,
       };
-    }),
-
-  create: protectedProcedure
-    .input(agentsInsertSchema)
-    .mutation(async ({ input, ctx }) => {
-      const [createdAagent] = await db
-        .insert(agents)
-        .values({ ...input, userId: ctx.auth.user.id })
-        .returning();
-
-      return createdAagent;
     }),
 });
